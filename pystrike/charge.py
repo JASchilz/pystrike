@@ -240,7 +240,7 @@ class Charge(abc.ABC):
 
         Returns:
             - An instance of `Charge`, filled from the attributes of
-            the charge with the given `charge_id`.
+              the charge with the given `charge_id`.
 
         """
 
