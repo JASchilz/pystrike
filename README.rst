@@ -30,8 +30,8 @@ Initialize the ``Charge`` class:
    from pystrike.charge import make_charge_class
 
    Charge = make_charge_class(
-       api_key="YOURSTRIKEAPIKEY",
-       api_host="api.strike.acinq.co",
+       api_key="YOURSTRIKETESTNETAPIKEY",
+       api_host="api.dev.strike.acinq.co",
        api_base="/api/v1/",
    )
 
@@ -41,8 +41,8 @@ Create a new ``charge``:
 
    charge = Charge(
            currency=Charge.CURRENCY_BTC,
-           amount=42000,                   # Amount in Satoshi
-           description="1%20Blockaccino",
+           amount=4200,                    # Amount in Satoshi
+           description="services%20rendered",
        )
 
 Retrieve a payment request:
@@ -51,12 +51,14 @@ Retrieve a payment request:
 
    payment_request = charge.payment_request
 
-   # Now `payment_request` might be something like "lnbcb420u1pdsdxfep..."
+   # Now `payment_request` might be something like "lnbtb420u1pdsdxfep..."
    
 At this point, you would present the ``payment_request`` to your
 customer. You can call ``charge.update()`` to poll the Strike server
 for the current status of the charge, and then retrieve whether or not
 the charge has been paid from the ``charge.paid`` attribute.
+
+The example above uses Strike's testnet web service at ``api.dev.strike.acinq.co``. When you're ready to issue mainnet lightning invoices, you'll need to use your Strike mainnet API key and make your requests to host ``api.strike.acinq.co``.
 
 Use
 ---
@@ -85,8 +87,8 @@ You'll begin by creating a Charge class from the provided ``make_charge_class`` 
    from pystrike.charge import make_charge_class
 
    Charge = make_charge_class(
-       api_key="YOURSTRIKEAPIKEY",
-       api_host="api.strike.acinq.co",
+       api_key="YOURSTRIKETESTNETAPIKEY",
+       api_host="api.dev.strike.acinq.co",
        api_base="/api/v1/",
    )
 
@@ -94,6 +96,8 @@ The host will probably be one of:
 
   - api.strike.acinq.co: the mainnet version of Strike
   - api.dev.strike.acinq.co: the testnet version of Strike
+
+If you're pointing your charge class to the mainnet version then be sure to use the API key from your mainnet Strike dashboard.
 
 Creating a Charge
 ^^^^^^^^^^^^^^^^^
@@ -104,8 +108,8 @@ You can create a new charge with the following code:
 
    charge = Charge(
            currency=Charge.CURRENCY_BTC,
-           amount=42000,                   # Amount in Satoshi
-           description="1%20Blockaccino",
+           amount=4200,                   # Amount in Satoshi
+           description="services%20rendered",
        )
 
 This initialization will automatically reach out to the Strike web service and create a new charge on their servers. Once this call has returned, you can immediately access the details of that charge through ``charge.id``, ``charge.payment_request``, and so on.
