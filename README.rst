@@ -141,12 +141,8 @@ If you're developing a web application, you could use web hooks instead of polli
 Testing
 -------
 
-The host will probably be one of:
-
-  - api.strike.acinq.co: the mainnet version of Strike
-  - api.dev.strike.acinq.co: the testnet version of Strike
-
 Running the library tests requires two environment variables:
+
   - ``STRIKE_TESTNET_API_KEY``: Your API key for the ``api.dev.strike.acinq.co``
     web service.
   - ``RETRIEVE_CHARGE_ID``:  The Strike id of a charge in your
