@@ -16,6 +16,10 @@ pystrike
 
 Python wrapper for `Acinq’s Strike lightning network payment service`_.
 
+The lightning network allows near-fee, near-instant transactions atop the Bitcoin chain layer. Acinq operates the Strike service, which allows you to create lightning invoices, receive lightning payments, and receive consolidated payouts on-chain. This Python library allows you to invoice customers and check the payment-status of those invoices in just a few lines of code.
+
+This library does not require any extra third-party dependencies.
+
 Example
 -------
 
