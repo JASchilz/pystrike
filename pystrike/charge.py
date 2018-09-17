@@ -54,16 +54,22 @@ class Charge(abc.ABC):
     @property
     @abc.abstractmethod
     def api_key(self):
+        """Concrete subclasses must define an api_key."""
+
         pass
 
     @property
     @abc.abstractmethod
     def api_host(self):
+        """Concrete subclasses must define an api_host."""
+
         pass
 
     @property
     @abc.abstractmethod
     def api_base(self):
+        """Concrete subclasses must define an api_base."""
+
         pass
 
     def __init__(
@@ -114,6 +120,16 @@ class Charge(abc.ABC):
             self.update()
  
     def update(self):
+        """
+        Update the charge from the server.
+
+        If this charge has an `id`, then the method will _retrieve_ the
+        charge from the server. If this charge does not have an `id`,
+        then this method will _create_ the charge on the server and
+        then fill the local charge from the attributes created and
+        returned by the Strike server.
+        """
+
         auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
         am_on_server = super().__getattribute__('id') is not None
 
@@ -200,9 +216,9 @@ class Charge(abc.ABC):
                     raise ServerErrorException(data['message'])
 
             raise UnexpectedResponseException(
-                    "The strike server returned an unexpected response: " +
-                    json.dumps(data)
-                )
+                "The strike server returned an unexpected response: " +
+                json.dumps(data)
+            )
 
     @classmethod
     def from_charge_id(cls, charge_id):
@@ -251,6 +267,10 @@ def make_charge_class(api_key, api_host, api_base):
     }
 
     class MyCharge(Charge):
+        """
+        This concrete subclass of `Charge` is defined and returned by
+        the `make_charge_class` function.
+        """
 
         api_key = parameters['api_key']
         api_host = parameters['api_host']
