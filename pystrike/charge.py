@@ -144,6 +144,15 @@ class Charge(abc.ABC):
         try:
             response = self.api_connection.getresponse()
         except http.client.RemoteDisconnected:
+            """
+            I found that the Strike server will prematurely close
+            the connection the _first_ time I make a GET request
+            after the invoice has been paid.
+
+            This `except` clause represents a retry on that close
+            condition.
+            """
+
             if method == 'GET':
                 self.api_connection.request(
                     method,
