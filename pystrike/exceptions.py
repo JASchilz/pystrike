@@ -2,6 +2,7 @@
 Exceptions for the pystrike module.
 """
 
+
 class ConnectionException(Exception):
     """
     Raised when the client is unable to communicate with the indicated
@@ -15,6 +16,7 @@ class ConnectionException(Exception):
 
     pass
 
+
 class ClientRequestException(Exception):
     """
     Raised when the server returns a 4xx response.
@@ -24,6 +26,7 @@ class ClientRequestException(Exception):
     """
 
     pass
+
 
 class ServerErrorException(Exception):
     """
@@ -35,6 +38,7 @@ class ServerErrorException(Exception):
 
     pass
 
+
 class UnexpectedResponseException(Exception):
     """
     Raised when the server returns a response that the library does not
@@ -43,10 +47,10 @@ class UnexpectedResponseException(Exception):
 
     pass
 
+
 class ChargeNotFoundException(ClientRequestException):
     """
     Raised when the server returns a 404 response.
     """
 
     pass
-

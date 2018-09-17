@@ -15,6 +15,7 @@ from .exceptions import ConnectionException, ClientRequestException, \
         ChargeNotFoundException, UnexpectedResponseException, \
         ServerErrorException
 
+
 class Charge(abc.ABC):
     """
     The Charge class is your interface to the Strike web service.
@@ -65,7 +66,6 @@ class Charge(abc.ABC):
     def api_base(self):
         pass
 
-
     def __init__(
             self,
             amount,
@@ -97,7 +97,7 @@ class Charge(abc.ABC):
             context=ssl.create_default_context(),
         )
 
-        self.amount = amount 
+        self.amount = amount
         self.currency = currency
         self.description = description
         self.customer_id = customer_id
@@ -112,7 +112,7 @@ class Charge(abc.ABC):
 
         if create:
             self.update()
-        
+ 
     def update(self):
         auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
         am_on_server = super().__getattribute__('id') is not None
@@ -127,10 +127,10 @@ class Charge(abc.ABC):
                 'customer_id': self.customer_id,
             })
             headers = {
-                'Authorization' : 'Basic ' + auth,
-                'Content-Type' : 'application/x-www-form-urlencoded',
-                'Accept' : '*/*',
-                'User-Agent' : 'pystrike',
+                'Authorization': 'Basic ' + auth,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': '*/*',
+                'User-Agent': 'pystrike',
             }
 
         else:
@@ -138,9 +138,9 @@ class Charge(abc.ABC):
             path = self.api_base + 'charges/' + self.id
             body = None
             headers = {
-                'Authorization' : 'Basic ' + auth,
-                'Accept' : '*/*',
-                'User-Agent' : 'pystrike',
+                'Authorization': 'Basic ' + auth,
+                'Accept': '*/*',
+                'User-Agent': 'pystrike',
             }
 
         try:
@@ -154,7 +154,8 @@ class Charge(abc.ABC):
             raise ConnectionException("Unable to communicate with host.")
 
         try:
-            try: response = self.api_connection.getresponse()
+            try:
+                response = self.api_connection.getresponse()
             except http.client.RemoteDisconnected:
                 """
                 I found that the Strike server will prematurely close
@@ -175,7 +176,6 @@ class Charge(abc.ABC):
                     response = self.api_connection.getresponse()
         except:
             raise ConnectionException("Unable to communicate with host.")
-
 
         data = json.loads(response.read())
 
@@ -204,7 +204,6 @@ class Charge(abc.ABC):
                     json.dumps(data)
                 )
 
-
     @classmethod
     def from_charge_id(cls, charge_id):
         """
@@ -226,7 +225,6 @@ class Charge(abc.ABC):
         charge.update()
 
         return charge
-
 
 
 def make_charge_class(api_key, api_host, api_base):
@@ -259,4 +257,3 @@ def make_charge_class(api_key, api_host, api_base):
         api_base = parameters['api_base']
 
     return MyCharge
-
