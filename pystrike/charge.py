@@ -72,6 +72,7 @@ class Charge(abc.ABC):
             currency,
             description="",
             customer_id="",
+            create=True,
     ):
         """
         Initialize an instance of `Charge`. See the Strike API
@@ -84,10 +85,12 @@ class Charge(abc.ABC):
         Kwargs:
             - description (str): Optional invoice description.
             - customer_id (str): Optional customer identifier.
+            - create (bool): Whether to automatically create a
+                             corresponding charge on the Strike
+                             service.
 
 
         """
-
 
         self.api_connection = http.client.HTTPSConnection(
             self.api_host,
@@ -107,7 +110,8 @@ class Charge(abc.ABC):
         self.created = None
         self.updated = None
 
-        self.update()
+        if create:
+            self.update()
         
     def update(self):
         auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
@@ -216,10 +220,10 @@ class Charge(abc.ABC):
 
         """
 
-        charge = cls(0, cls.CURRENCY_BTC)
+        charge = cls(0, cls.CURRENCY_BTC, create=False)
 
         charge.id = charge_id
-        charge._update()
+        charge.update()
 
         return charge
 
