@@ -6,6 +6,9 @@
 .. image:: https://img.shields.io/pypi/v/pystrike.svg
    :target: https://pypi.org/project/pystrike/
    :alt: PyPI
+.. image:: https://readthedocs.org/projects/pystrike/badge/?version=latest
+   :target: https://pystrike.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 
 pystrike
