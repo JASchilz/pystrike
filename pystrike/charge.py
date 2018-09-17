@@ -9,6 +9,9 @@ import http.client
 import urllib.parse
 import ssl
 import abc
+import socket
+
+from .exceptions import ConnectionException
 
 class Charge(abc.ABC):
     """
@@ -134,33 +137,39 @@ class Charge(abc.ABC):
                 'User-Agent' : 'pystrike',
             }
 
-        self.api_connection.request(
-            method,
-            path,
-            body=body,
-            headers=headers,
-        )
+        try:
+            self.api_connection.request(
+                method,
+                path,
+                body=body,
+                headers=headers,
+            )
+        except socket.gaierror:
+            raise ConnectionException("Unable to communicate with host.")
+
 
         try:
-            response = self.api_connection.getresponse()
-        except http.client.RemoteDisconnected:
-            """
-            I found that the Strike server will prematurely close
-            the connection the _first_ time I make a GET request
-            after the invoice has been paid.
+            try: response = self.api_connection.getresponse()
+            except http.client.RemoteDisconnected:
+                """
+                I found that the Strike server will prematurely close
+                the connection the _first_ time I make a GET request
+                after the invoice has been paid.
 
-            This `except` clause represents a retry on that close
-            condition.
-            """
+                This `except` clause represents a retry on that close
+                condition.
+                """
 
-            if method == 'GET':
-                self.api_connection.request(
-                    method,
-                    path,
-                    body=body,
-                    headers=headers,
-                )
-                response = self.api_connection.getresponse()
+                if method == 'GET':
+                    self.api_connection.request(
+                        method,
+                        path,
+                        body=body,
+                        headers=headers,
+                    )
+                    response = self.api_connection.getresponse()
+        except:
+            raise ConnectionException("Unable to communicate with host.")
 
 
         data = json.loads(response.read())
