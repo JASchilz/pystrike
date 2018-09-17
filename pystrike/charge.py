@@ -197,7 +197,7 @@ class Charge(abc.ABC):
                 'Authorization': 'Basic ' + auth,
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': '*/*',
-                'User-Agent': 'pystrike',
+                'User-Agent': 'pystrikev0.5.1',
             }
 
         else:
@@ -207,7 +207,7 @@ class Charge(abc.ABC):
             headers = {
                 'Authorization': 'Basic ' + auth,
                 'Accept': '*/*',
-                'User-Agent': 'pystrike',
+                'User-Agent': 'pystrikev0.5.1',
             }
 
         data = self._make_request(method, path, body, headers)

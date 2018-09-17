@@ -1,17 +1,17 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="pystrike",
-    version="0.0.1",
+    version="0.5.1",
     author="Joseph Schilz",
     author_email="joseph@schilz.org",
     description="Python library for interacting with Acinq's Strike lightning network payment web service.",
     long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    long_description_content_type="text/x-rst",
+    url="https://github.com/JASchilz/pystrike",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
