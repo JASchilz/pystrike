@@ -57,6 +57,13 @@ the charge has been paid from the ``charge.paid`` attribute.
 Use
 ---
 
+Install pystrike
+^^^^^^^^^^^^^^^^
+
+::
+
+   $ pip install pystrike
+
 Creating an API Key
 ^^^^^^^^^^^^^^^^^^^
 
