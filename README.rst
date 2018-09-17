@@ -42,7 +42,7 @@ Create a new ``charge``:
    charge = Charge(
            currency=Charge.CURRENCY_BTC,
            amount=4200,                    # Amount in Satoshi
-           description="services%20rendered",
+           description="services rendered",
        )
 
 Retrieve a payment request:
@@ -51,7 +51,7 @@ Retrieve a payment request:
 
    payment_request = charge.payment_request
 
-   # Now `payment_request` might be something like "lnbtb420u1pdsdxfep..."
+   # Now `payment_request` might be something like "lnbtb420u1pfoobarbaz..."
    
 At this point, you would present the ``payment_request`` to your
 customer. You can call ``charge.update()`` to poll the Strike server
@@ -108,8 +108,8 @@ You can create a new charge with the following code:
 
    charge = Charge(
            currency=Charge.CURRENCY_BTC,
-           amount=4200,                   # Amount in Satoshi
-           description="services%20rendered",
+           amount=4200,                     # Amount in Satoshi
+           description="services rendered",
        )
 
 This initialization will automatically reach out to the Strike web service and create a new charge on their servers. Once this call has returned, you can immediately access the details of that charge through ``charge.id``, ``charge.payment_request``, and so on.
@@ -123,7 +123,7 @@ Rather than creating a new charge, if you know the Strike id of an existing char
 
 ::
 
-   charge = Charge.from_charge_id('ch_LWawgrPmsuuRjFFv8eurFJkerhgDA')
+   charge = Charge.from_charge_id('ch_LWafoobarbazjFFv8eurFJkerhgDA')
 
 Updating a Charge
 ^^^^^^^^^^^^^^^^^
