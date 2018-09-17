@@ -25,6 +25,16 @@ class ClientRequestException(Exception):
 
     pass
 
+class ServerErrorException(Exception):
+    """
+    Raised when the server returns a 5xx response.
+
+    The library code shall include the content of the error message
+    from Strike, if available.
+    """
+
+    pass
+
 class UnexpectedResponseException(Exception):
     """
     Raised when the server returns a response that the library does not

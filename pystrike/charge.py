@@ -12,7 +12,8 @@ import abc
 import socket
 
 from .exceptions import ConnectionException, ClientRequestException, \
-        ChargeNotFoundException, UnexpectedResponseException
+        ChargeNotFoundException, UnexpectedResponseException, \
+        ServerErrorException
 
 class Charge(abc.ABC):
     """
@@ -148,7 +149,6 @@ class Charge(abc.ABC):
         except socket.gaierror:
             raise ConnectionException("Unable to communicate with host.")
 
-
         try:
             try: response = self.api_connection.getresponse()
             except http.client.RemoteDisconnected:
@@ -190,8 +190,10 @@ class Charge(abc.ABC):
             if 'code' in data:
                 if data['code'] == 404:
                     raise ChargeNotFoundException(data['message'])
-                elif data['code'] >= 400:
+                elif data['code'] >= 400 and data['code'] <= 499:
                     raise ClientRequestException(data['message'])
+                elif data['code'] >= 500 and data['code'] <= 599:
+                    raise ServerErrorException(data['message'])
 
             raise UnexpectedResponseException(
                     "The strike server returned an unexpected response: " +
