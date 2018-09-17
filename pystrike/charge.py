@@ -119,7 +119,7 @@ class Charge(abc.ABC):
         if create:
             self.update()
 
-    def _make_request(self, method, path, body, headers):
+    def _make_request(self, method, path, body, headers, retry=True):
 
         try:
             self.api_connection.request(
@@ -132,26 +132,26 @@ class Charge(abc.ABC):
             raise ConnectionException("Unable to communicate with host.")
 
         try:
-            try:
-                response = self.api_connection.getresponse()
-            except http.client.RemoteDisconnected:
-                """
-                I found that the Strike server will prematurely close
-                the connection the _first_ time I make a GET request
-                after the invoice has been paid.
+            response = self.api_connection.getresponse()
+        except http.client.RemoteDisconnected:
+            """
+            I found that the Strike server will prematurely close
+            the connection the _first_ time I make a GET request
+            after the invoice has been paid.
 
-                This `except` clause represents a retry on that close
-                condition.
-                """
+            This `except` clause represents a retry on that close
+            condition.
+            """
 
-                if method == 'GET':
-                    self.api_connection.request(
-                        method,
-                        path,
-                        body=body,
-                        headers=headers,
-                    )
-                    response = self.api_connection.getresponse()
+            if method == 'GET' and retry:
+                return self._make_request(
+                    method, path, body, headers, retry=False,
+                )
+            else:
+                raise ConnectionException(
+                    "Remote host disconnected without sending " +
+                    "a response"
+                )
         except:
             raise ConnectionException("Unable to communicate with host.")
 
