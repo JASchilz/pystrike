@@ -11,7 +11,8 @@ import ssl
 import abc
 import socket
 
-from .exceptions import ConnectionException
+from .exceptions import ConnectionException, ClientRequestException, \
+        ChargeNotFoundException, UnexpectedResponseException
 
 class Charge(abc.ABC):
     """
@@ -174,16 +175,28 @@ class Charge(abc.ABC):
 
         data = json.loads(response.read())
 
-        self.id = data['id']
-        self.amount = data['amount']
-        self.currency = data['currency']
-        self.amount_satoshi = data['amount_satoshi']
-        self.payment_hash = data['payment_hash']
-        self.payment_request = data['payment_request']
-        self.description = data['description']
-        self.paid = data['paid']
-        self.created = data['created']
-        self.updated = data['updated']
+        try:
+            self.id = data['id']
+            self.amount = data['amount']
+            self.currency = data['currency']
+            self.amount_satoshi = data['amount_satoshi']
+            self.payment_hash = data['payment_hash']
+            self.payment_request = data['payment_request']
+            self.description = data['description']
+            self.paid = data['paid']
+            self.created = data['created']
+            self.updated = data['updated']
+        except KeyError:
+            if 'code' in data:
+                if data['code'] == 404:
+                    raise ChargeNotFoundException(data['message'])
+                elif data['code'] >= 400:
+                    raise ClientRequestException(data['message'])
+
+            raise UnexpectedResponseException(
+                    "The strike server returned an unexpected response: " +
+                    json.dumps(data)
+                )
 
 
     @classmethod
