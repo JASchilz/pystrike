@@ -16,9 +16,9 @@ pystrike
 
 Python wrapper for `Acinq’s Strike lightning network payment service`_.
 
-The lightning network allows near-fee, near-instant transactions atop the Bitcoin chain layer. Acinq operates the Strike service, which allows you to create lightning invoices, receive lightning payments, and receive consolidated payouts on-chain. This Python library allows you to invoice customers and check the payment-status of those invoices in just a few lines of code.
+The lightning network allows near-fee, near-instant transactions atop the Bitcoin chain layer. Acinq operates the Strike service, which allows you to create lightning invoices, receive lightning payments into your Strike account, and then receive consolidated payouts on-chain. This Python library allows you to invoice customers and check the payment-status of those invoices in just a few lines of code.
 
-This library does not require any extra third-party dependencies.
+This library does not require any third-party dependencies.
 
 Example
 -------
@@ -137,6 +137,20 @@ You can poll the Strike server to update your local charge object:
 For example, if you are waiting on payment for a charge, you might run ``charge.update()`` and then access ``charge.paid`` to see if a payment has been recorded for the charge on the Strike server.
 
 If you're developing a web application, you could use web hooks instead of polling the server. See Strike's documentation on web hooks for more information.
+
+Testing
+-------
+
+The host will probably be one of:
+
+  - api.strike.acinq.co: the mainnet version of Strike
+  - api.dev.strike.acinq.co: the testnet version of Strike
+
+Running the library tests requires two environment variables:
+  - ``STRIKE_TESTNET_API_KEY``: Your API key for the ``api.dev.strike.acinq.co``
+    web service.
+  - ``RETRIEVE_CHARGE_ID``:  The Strike id of a charge in your
+    ``api.dev.strike.acinq.co``. For example: ``ch_LWafoobarbazjFFv8eufoobarbaz``
 
 .. _Acinq’s Strike lightning network payment service: https://strike.acinq.co
 .. _testnet version of the service: https://dev.strike.acinq.co
