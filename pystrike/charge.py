@@ -102,64 +102,9 @@ class Charge(abc.ABC):
         self.created = None
         self.updated = None
 
-    def __getattribute__(self, name):
-        """
-        The dunder method `__getattribute__` takes responsibility
-        for updating instance attributes from the Strike server as
-        needed.
-
-        Specifically, if the client code requests an attribute that
-        has not yet been retrieved from the server, then this
-        method will retrieve it. And if the client code requests
-        the instance's `paid` attribute and the instance has not
-        yet seen its payment clear, this method will poll the
-        Strike server to detect if payment has cleared.
-
-        Args:
-            - name (str): The name of the attribute to retrieve
-
-        Returns:
-            - value: The value of the requested instance attribute
-
-        """
-        value = super().__getattribute__(name)
-
-        if value is None and name in [
-                'id', 'amount_satoshi', 'payment_request', 'created', 'updated'
-        ]:
-            self._update()
-            value = super().__getattribute__(name)
-
-        elif name == 'paid' and value is False:
-            self._update()
-            value = super().__getattribute__(name)
-
-        return value
-
-    @classmethod
-    def from_charge_id(cls, charge_id):
-        """
-        Class method to create and an instance of `Charge` and fill it
-        from the Strike server.
-
-        Args:
-            - charge_id (str): The id of a charge on Strike's server.
-
-        Returns:
-            - An instance of `Charge`, filled from the attributes of
-            the charge with the given `charge_id`.
-
-        """
-
-        charge = cls(0, cls.CURRENCY_BTC)
-
-        charge.id = charge_id
-        charge._update()
-
-        return charge
-
-
-    def _update(self):
+        self.update()
+        
+    def update(self):
         auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
         am_on_server = super().__getattribute__('id') is not None
 
@@ -221,6 +166,30 @@ class Charge(abc.ABC):
         self.paid = data['paid']
         self.created = data['created']
         self.updated = data['updated']
+
+
+    @classmethod
+    def from_charge_id(cls, charge_id):
+        """
+        Class method to create and an instance of `Charge` and fill it
+        from the Strike server.
+
+        Args:
+            - charge_id (str): The id of a charge on Strike's server.
+
+        Returns:
+            - An instance of `Charge`, filled from the attributes of
+            the charge with the given `charge_id`.
+
+        """
+
+        charge = cls(0, cls.CURRENCY_BTC)
+
+        charge.id = charge_id
+        charge._update()
+
+        return charge
+
 
 
 def make_charge_class(api_key, api_host, api_base):
