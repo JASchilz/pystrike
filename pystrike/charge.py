@@ -118,46 +118,8 @@ class Charge(abc.ABC):
 
         if create:
             self.update()
- 
-    def update(self):
-        """
-        Update the charge from the server.
 
-        If this charge has an `id`, then the method will _retrieve_ the
-        charge from the server. If this charge does not have an `id`,
-        then this method will _create_ the charge on the server and
-        then fill the local charge from the attributes created and
-        returned by the Strike server.
-        """
-
-        auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
-        am_on_server = super().__getattribute__('id') is not None
-
-        if not am_on_server:
-            method = 'POST'
-            path = self.api_base + 'charges'
-            body = urllib.parse.urlencode({
-                'amount': self.amount,
-                'currency': self.currency,
-                'description': self.description,
-                'customer_id': self.customer_id,
-            })
-            headers = {
-                'Authorization': 'Basic ' + auth,
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': '*/*',
-                'User-Agent': 'pystrike',
-            }
-
-        else:
-            method = 'GET'
-            path = self.api_base + 'charges/' + self.id
-            body = None
-            headers = {
-                'Authorization': 'Basic ' + auth,
-                'Accept': '*/*',
-                'User-Agent': 'pystrike',
-            }
+    def _make_request(self, method, path, body, headers):
 
         try:
             self.api_connection.request(
@@ -193,19 +155,65 @@ class Charge(abc.ABC):
         except:
             raise ConnectionException("Unable to communicate with host.")
 
-        data = json.loads(response.read())
+        return json.loads(response.read())
 
+    def _fill_from_data_dict(self, data):
+        self.id = data['id']
+        self.amount = data['amount']
+        self.currency = data['currency']
+        self.amount_satoshi = data['amount_satoshi']
+        self.payment_hash = data['payment_hash']
+        self.payment_request = data['payment_request']
+        self.description = data['description']
+        self.paid = data['paid']
+        self.created = data['created']
+        self.updated = data['updated']
+
+ 
+    def update(self):
+        """
+        Update the charge from the server.
+
+        If this charge has an `id`, then the method will _retrieve_ the
+        charge from the server. If this charge does not have an `id`,
+        then this method will _create_ the charge on the server and
+        then fill the local charge from the attributes created and
+        returned by the Strike server.
+        """
+
+        auth = base64.b64encode(self.api_key.encode() + b':').decode('ascii')
+        must_create = super().__getattribute__('id') is None
+
+        if must_create:
+            method = 'POST'
+            path = self.api_base + 'charges'
+            body = urllib.parse.urlencode({
+                'amount': self.amount,
+                'currency': self.currency,
+                'description': self.description,
+                'customer_id': self.customer_id,
+            })
+            headers = {
+                'Authorization': 'Basic ' + auth,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': '*/*',
+                'User-Agent': 'pystrike',
+            }
+
+        else:
+            method = 'GET'
+            path = self.api_base + 'charges/' + self.id
+            body = None
+            headers = {
+                'Authorization': 'Basic ' + auth,
+                'Accept': '*/*',
+                'User-Agent': 'pystrike',
+            }
+
+        data = self._make_request(method, path, body, headers)
+        
         try:
-            self.id = data['id']
-            self.amount = data['amount']
-            self.currency = data['currency']
-            self.amount_satoshi = data['amount_satoshi']
-            self.payment_hash = data['payment_hash']
-            self.payment_request = data['payment_request']
-            self.description = data['description']
-            self.paid = data['paid']
-            self.created = data['created']
-            self.updated = data['updated']
+            self._fill_from_data_dict(data)
         except KeyError:
             if 'code' in data:
                 if data['code'] == 404:
@@ -219,6 +227,7 @@ class Charge(abc.ABC):
                 "The strike server returned an unexpected response: " +
                 json.dumps(data)
             )
+
 
     @classmethod
     def from_charge_id(cls, charge_id):
