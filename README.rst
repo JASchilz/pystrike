@@ -58,6 +58,27 @@ customer. You can call ``charge.update()`` to poll the Strike server
 for the current status of the charge, and then retrieve whether or not
 the charge has been paid from the ``charge.paid`` attribute.
 
+For example, suppose that ``charge.payment_request`` has not yet been paid:
+
+::
+
+  charge.update()  # Reaches out the the Acinq server to retrieve the
+                   # status of the charge
+
+  paid = charge.paid
+  # Because the payment request has not yet been paid, charge.paid is False
+
+Then suppose that the client pays the ``charge.payment_request``:
+
+::
+
+  charge.update()
+  paid = charge.paid
+  # Because the client paid the request before we called `update`, charge.paid
+  # evaluates to True.
+
+Acinq's Strike service also offers a web hook/callback service, which is a better way to update your charges than frequent polling if you are running a web service.
+
 The example above uses Strike's testnet web service at ``api.dev.strike.acinq.co``. When you're ready to issue mainnet lightning invoices, you'll need to use your Strike mainnet API key and make your requests to host ``api.strike.acinq.co``.
 
 Use
@@ -134,7 +155,7 @@ You can poll the Strike server to update your local charge object:
 
    charge.update()
 
-For example, if you are waiting on payment for a charge, you might run ``charge.update()`` and then access ``charge.paid`` to see if a payment has been recorded for the charge on the Strike server.
+This command reaches out to the Strike server and updates the attributes of the charge. For example, if you are waiting on payment for a charge, you might run ``charge.update()`` to retrieve the status of the charge from the Strike server and then access ``charge.paid`` to see if a payment has been recorded for the charge on the Strike server.
 
 If you're developing a web application, you could use web hooks instead of polling the server. See Strike's documentation on web hooks for more information.
 
