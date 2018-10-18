@@ -58,7 +58,7 @@ customer. You can call ``charge.update()`` to poll the Strike server
 for the current status of the charge, and then retrieve whether or not
 the charge has been paid from the ``charge.paid`` attribute.
 
-For example, suppose that ``charge.payment_request`` has not yet been paid:
+For example, suppose that ``charge.payment_request`` has not yet been paid and then we run the following code:
 
 ::
 
@@ -68,7 +68,7 @@ For example, suppose that ``charge.payment_request`` has not yet been paid:
   paid = charge.paid
   # Because the payment request has not yet been paid, charge.paid is False
 
-Then suppose that the client pays the ``charge.payment_request``:
+Then suppose that the client pays the ``charge.payment_request`` and then we run the following code:
 
 ::
 
