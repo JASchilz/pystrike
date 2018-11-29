@@ -155,7 +155,7 @@ class Charge(abc.ABC):
         except:
             raise ConnectionException("Unable to communicate with host.")
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode())
 
     def _fill_from_data_dict(self, data):
         self.id = data['id']
