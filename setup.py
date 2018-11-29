@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="pystrike",
-    version="0.5.2",
+    version="0.5.3",
     author="Joseph Schilz",
     author_email="joseph@schilz.org",
     description="Python library for interacting with Acinq's Strike lightning network payment web service.",
